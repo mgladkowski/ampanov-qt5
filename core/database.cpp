@@ -26,8 +26,6 @@ QSqlDatabase Database::database() {
 
         dbo.open();
 
-        qDebug() << "Database opened";
-
         if (dbo.isOpenError() == true) {
 
             qCritical() << "Database connection failed : " << dbo.lastError();

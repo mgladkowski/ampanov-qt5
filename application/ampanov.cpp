@@ -122,17 +122,20 @@ bool Ampanov::isHealthy() {
 
     bool pass = true;
 
-//    if (! Database::test()) {
+    if (Database::test()) {
+        qInfo() << "Database : ok";
+    } else {
+        qCritical() << "Database : fail";
+        pass = false;
+    }
 
-//        qCritical() << "Test failed : Database";
+//    if (ZeroMq::test()) {
+//        qInfo() << "ZMQ : ok";
+//    } else {
+//        qCritical() << "ZMQ : fail";
 //        pass = false;
 //    }
 
-//    if (! ZeroMq::test()) {
-
-//        qCritical() << "Test failed : ZMQ";
-//        pass = false;
-//    }
     return pass;
 }
 

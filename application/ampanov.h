@@ -6,6 +6,8 @@
 #include <QDebug>
 #include <QTime>
 #include <QTimer>
+#include "control.h"
+#include "helpers.h"
 
 class Ampanov : public QObject {
 
