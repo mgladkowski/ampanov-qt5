@@ -14,7 +14,7 @@ class Ampanov : public QObject {
 
 private:
 
-    QTimer          *loopTimer;
+    QTimer*         loopTimer;
     const int       loopInterval = 1000;
     bool            isRunning;
     bool            isPaused;

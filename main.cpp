@@ -8,7 +8,7 @@ int main(int argc, char *argv[]) {
     Service* service = new Service();
     service->start();
 
-    QObject::connect(service, SIGNAL(finished()), qApp, SLOT(quit()));
+    QObject::connect(service, SIGNAL(finished()), qApp, SLOT(quit()), Qt::QueuedConnection);
 
     return a.exec();
 }

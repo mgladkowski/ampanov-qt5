@@ -1,3 +1,6 @@
+QT += core
+QT += sql
+QT += network
 QT -= gui
 
 CONFIG += c++11 console
@@ -17,7 +20,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
     application/ampanov.cpp \
-    application/service.cpp
+    application/service.cpp \
+    application/control.cpp \
+    application/helpers.cpp \
+    models/engine.cpp \
+    core/database.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -26,4 +33,9 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     application/ampanov.h \
-    application/service.h
+    application/service.h \
+    application/control.h \
+    application/helpers.h \
+    models/engine.h \
+    core/database.h \
+    core/enums.h
