@@ -38,7 +38,7 @@ bool Database::test() {
 
     bool result = false;
 
-    QString sql = "SELECT rowid FROM engine LIMIT 1;";
+    QString sql = "SELECT rowid FROM user LIMIT 1;";
     QSqlQuery q(Database::database());
     q.prepare(sql);
     if (q.exec()) {

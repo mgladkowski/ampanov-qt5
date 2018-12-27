@@ -23,6 +23,7 @@ QuestradeApi::~QuestradeApi() {
 
     network->disconnect(network, SIGNAL(finished(QNetworkReply *)), &eventLoop, SLOT(quit()));
     delete network;
+    network = nullptr;
 }
 
 
@@ -820,7 +821,8 @@ bool QuestradeApi::httpGet(QString url) {
 
     bool result = false;
     QUrl qurl(url);
-    QNetworkRequest request(qurl);
+    QNetworkRequest request;
+    request.setUrl(qurl);
     QNetworkReply *reply = network->get(request);
     eventLoop.exec();
 
