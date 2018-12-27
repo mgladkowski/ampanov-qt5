@@ -2,6 +2,7 @@
 #define CONTROL_H
 
 #include <QDateTime>
+#include "core/zeromq.h"
 #include "models/engine.h"
 
 class Control {

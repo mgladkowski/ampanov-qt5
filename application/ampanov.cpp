@@ -129,12 +129,12 @@ bool Ampanov::isHealthy() {
         pass = false;
     }
 
-//    if (ZeroMq::test()) {
-//        qInfo() << "ZMQ : ok";
-//    } else {
-//        qCritical() << "ZMQ : fail";
-//        pass = false;
-//    }
+    if (ZeroMq::test()) {
+        qInfo() << "ZMQ : ok";
+    } else {
+        qCritical() << "ZMQ : fail";
+        pass = false;
+    }
 
     return pass;
 }
@@ -154,7 +154,7 @@ bool Ampanov::start() {
     isRunning = true;
     loopTimer->start();
 
-    //Control::start();
+    Control::start();
 
     return true;
 }
@@ -165,7 +165,7 @@ bool Ampanov::stop() {
     isRunning = false;
     loopTimer->stop();
 
-    //Control::stop();
+    Control::stop();
 
     return true;
 }
@@ -178,7 +178,7 @@ bool Ampanov::pause() {
     isPaused = true;
     loopTimer->stop();
 
-    //Control::pause();
+    Control::pause();
 
     return true;
 }
@@ -196,7 +196,7 @@ bool Ampanov::resume() {
     isPaused = false;
     loopTimer->start();
 
-    //Control::resume();
+    Control::resume();
 
     return true;
 }

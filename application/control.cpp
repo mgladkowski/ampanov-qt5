@@ -15,7 +15,7 @@ void Control::start() {
     data["data"] = "start";
     data["time"] = QTime::currentTime().toString();
 
-    //ZeroMq::push(data);
+    ZeroMq::push(data);
 }
 
 
@@ -29,7 +29,7 @@ void Control::pause() {
     data["data"] = "pause";
     data["time"] = QTime::currentTime().toString();
 
-    //ZeroMq::push(data);
+    ZeroMq::push(data);
 }
 
 
@@ -43,7 +43,7 @@ void Control::resume() {
     data["data"] = "resume";
     data["time"] = QTime::currentTime().toString();
 
-    //ZeroMq::push(data);
+    ZeroMq::push(data);
 }
 
 
@@ -57,7 +57,7 @@ void Control::stop() {
     data["data"] = "stop";
     data["time"] = QTime::currentTime().toString();
 
-    //ZeroMq::push(data);
+    ZeroMq::push(data);
 }
 
 
@@ -70,7 +70,7 @@ void Control::heartbeat() {
     data["type"] = "h";
     data["time"] = QTime::currentTime().toString();
 
-    //ZeroMq::push(data);
+    ZeroMq::push(data);
 }
 
 
@@ -116,7 +116,7 @@ void Control::create_checklist(int state) {
 
     QJsonDocument doc(data);
     QByteArray bytes = doc.toJson();
-    //ZeroMq::push(bytes);
+    ZeroMq::push(bytes);
 
     qInfo() << "[checklist] " << qPrintable(TaskState::text(state));
 }
@@ -145,7 +145,7 @@ void Control::onstart_markets_update(int state) {
 
         QJsonDocument doc(data);
         QByteArray bytes = doc.toJson();
-        //ZeroMq::push(bytes);
+        ZeroMq::push(bytes);
 
         qInfo() << "[onstart] markets update : " << qPrintable(TaskState::text(state));
     }
@@ -175,7 +175,7 @@ void Control::onstart_symbols_update(int state) {
 
         QJsonDocument doc(data);
         QByteArray bytes = doc.toJson();
-        //ZeroMq::push(bytes);
+        ZeroMq::push(bytes);
 
         qInfo() << "[onstart] stocks update : " << qPrintable(TaskState::text(state));
     }
@@ -205,7 +205,7 @@ void Control::onstart_symbol_update(int state, QString symbol) {
 
         QJsonDocument doc(data);
         QByteArray bytes = doc.toJson();
-        //ZeroMq::push(bytes);
+        ZeroMq::push(bytes);
 
         qInfo() << "[onstart] stock data : " << qPrintable(symbol) << " : " << qPrintable(TaskState::text(state));
     }
@@ -235,7 +235,7 @@ void Control::onstart_symbols_pattern(int state) {
 
         QJsonDocument doc(data);
         QByteArray bytes = doc.toJson();
-        //ZeroMq::push(bytes);
+        ZeroMq::push(bytes);
 
         qInfo() << "[onstart] stocks pattern : " << qPrintable(TaskState::text(state));
     }
@@ -265,7 +265,7 @@ void Control::onstart_account_update(int state) {
 
         QJsonDocument doc(data);
         QByteArray bytes = doc.toJson();
-        //ZeroMq::push(bytes);
+        ZeroMq::push(bytes);
 
         qInfo() << "[onstart] accounts : " << qPrintable(TaskState::text(state));
     }
@@ -295,7 +295,7 @@ void Control::onopen_options_update(int state) {
 
         QJsonDocument doc(data);
         QByteArray bytes = doc.toJson();
-        //ZeroMq::push(bytes);
+        ZeroMq::push(bytes);
 
         qInfo() << "[onopen] option quotes : " << qPrintable(TaskState::text(state));
     }
@@ -325,7 +325,7 @@ void Control::intraday_minute_update(int state) {
 
         QJsonDocument doc(data);
         QByteArray bytes = doc.toJson();
-        //ZeroMq::push(bytes);
+        ZeroMq::push(bytes);
 
         qInfo() << "[intraday] 1m update : " << qPrintable(TaskState::text(state));
     }
@@ -355,7 +355,7 @@ void Control::intraday_minute_pattern(int state) {
 
         QJsonDocument doc(data);
         QByteArray bytes = doc.toJson();
-        //ZeroMq::push(bytes);
+        ZeroMq::push(bytes);
 
         qInfo() << "[intraday] 1m candle pattern : " << qPrintable(TaskState::text(state));
     }
@@ -385,7 +385,7 @@ void Control::intraday_thirty_update(int state) {
 
         QJsonDocument doc(data);
         QByteArray bytes = doc.toJson();
-        //ZeroMq::push(bytes);
+        ZeroMq::push(bytes);
 
         qInfo() << "[intraday] 30m update : " << qPrintable(TaskState::text(state));
     }
@@ -415,7 +415,7 @@ void Control::intraday_thirty_pattern(int state) {
 
         QJsonDocument doc(data);
         QByteArray bytes = doc.toJson();
-        //ZeroMq::push(bytes);
+        ZeroMq::push(bytes);
 
         qInfo() << "[intraday] 30m candle pattern : " << qPrintable(TaskState::text(state));
     }
@@ -445,7 +445,7 @@ void Control::intraday_hour_update(int state) {
 
         QJsonDocument doc(data);
         QByteArray bytes = doc.toJson();
-        //ZeroMq::push(bytes);
+        ZeroMq::push(bytes);
 
         qInfo() << "[intraday] 1h update : " << qPrintable(TaskState::text(state));
     }
@@ -475,7 +475,7 @@ void Control::intraday_hour_pattern(int state) {
 
         QJsonDocument doc(data);
         QByteArray bytes = doc.toJson();
-        //ZeroMq::push(bytes);
+        ZeroMq::push(bytes);
 
         qInfo() << "[intraday] 1h candle pattern : " << qPrintable(TaskState::text(state));
     }
@@ -505,7 +505,7 @@ void Control::intraday_account_update(int state) {
 
         QJsonDocument doc(data);
         QByteArray bytes = doc.toJson();
-        //ZeroMq::push(bytes);
+        ZeroMq::push(bytes);
 
         qInfo() << "[intraday] accounts : " << qPrintable(TaskState::text(state));
     }
@@ -535,7 +535,7 @@ void Control::intraday_trades_open(int state) {
 
         QJsonDocument doc(data);
         QByteArray bytes = doc.toJson();
-        //ZeroMq::push(bytes);
+        ZeroMq::push(bytes);
 
         qInfo() << "[intraday] check open trades : " << qPrintable(TaskState::text(state));
     }
@@ -565,7 +565,7 @@ void Control::intraday_trades_setup(int state) {
 
         QJsonDocument doc(data);
         QByteArray bytes = doc.toJson();
-        //ZeroMq::push(bytes);
+        ZeroMq::push(bytes);
 
         qInfo() << "[intraday] check trade setups : " << qPrintable(TaskState::text(state));
     }
@@ -595,7 +595,7 @@ void Control::intraday_trades_enter(int state) {
 
         QJsonDocument doc(data);
         QByteArray bytes = doc.toJson();
-        //ZeroMq::push(bytes);
+        ZeroMq::push(bytes);
 
         qInfo() << "[intraday] check for trade entry : " << qPrintable(TaskState::text(state));
     }
@@ -625,7 +625,7 @@ void Control::onclose_options_update(int state) {
 
         QJsonDocument doc(data);
         QByteArray bytes = doc.toJson();
-        //ZeroMq::push(bytes);
+        ZeroMq::push(bytes);
 
         qInfo() << "[onclose] option quotes : " << qPrintable(TaskState::text(state));
     }
@@ -655,7 +655,7 @@ void Control::onclose_symbols_update(int state) {
 
         QJsonDocument doc(data);
         QByteArray bytes = doc.toJson();
-        //ZeroMq::push(bytes);
+        ZeroMq::push(bytes);
 
         qInfo() << "[onclose] stocks update : " << qPrintable(TaskState::text(state));
     }
@@ -685,7 +685,7 @@ void Control::onclose_symbol_update(int state, QString symbol) {
 
         QJsonDocument doc(data);
         QByteArray bytes = doc.toJson();
-        //ZeroMq::push(bytes);
+        ZeroMq::push(bytes);
 
         qInfo() << "[onclose] stock data : " << qPrintable(symbol) << " : " << qPrintable(TaskState::text(state));
     }
@@ -715,7 +715,7 @@ void Control::onclose_symbols_pattern(int state) {
 
         QJsonDocument doc(data);
         QByteArray bytes = doc.toJson();
-        //ZeroMq::push(bytes);
+        ZeroMq::push(bytes);
 
         qInfo() << "[onclose] candle pattern : " << qPrintable(TaskState::text(state));
     }
@@ -745,7 +745,7 @@ void Control::onclose_account_update(int state) {
 
         QJsonDocument doc(data);
         QByteArray bytes = doc.toJson();
-        //ZeroMq::push(bytes);
+        ZeroMq::push(bytes);
 
         qInfo() << "[onclose] accounts : " << qPrintable(TaskState::text(state));
     }
