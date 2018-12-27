@@ -4,10 +4,18 @@
 #include <QObject>
 #include <QCoreApplication>
 #include <QDebug>
-#include <QTime>
 #include <QTimer>
 #include "control.h"
 #include "helpers.h"
+#include "scanner.h"
+#include "trader.h"
+#include "models/account.h"
+#include "models/candle.h"
+#include "models/stock.h"
+#include "models/strategy.h"
+#include "models/trade.h"
+#include "broker/simulator.h"
+#include "broker/questrade.h"
 
 class Ampanov : public QObject {
 
@@ -16,7 +24,11 @@ class Ampanov : public QObject {
 
 private:
 
-    QTimer*         loopTimer;
+    QuestradeApi    *questrade;
+    Scanner         *scanner;
+    Trader          *trader;
+
+    QTimer          *loopTimer;
     const int       loopInterval = 1000;
     bool            isRunning;
     bool            isPaused;
@@ -33,6 +45,25 @@ private:
     QTime           time_close_ext;
     QTime           time_stop;
 
+    bool            onstart_markets_update();
+    bool            onstart_symbols_update();
+    bool            onstart_symbols_pattern();
+    bool            onstart_account_update();
+    bool            onopen_options_update();
+    bool            intraday_minute_update();
+    bool            intraday_minute_pattern();
+    bool            intraday_thirty_update();
+    bool            intraday_thirty_pattern();
+    bool            intraday_hour_update();
+    bool            intraday_hour_pattern();
+    bool            intraday_account_update();
+    bool            intraday_trades_open();
+    bool            intraday_trades_setup();
+    bool            intraday_trades_enter();
+    bool            onclose_options_update();
+    bool            onclose_symbols_update();
+    bool            onclose_symbols_pattern();
+    bool            onclose_account_update();
 
 public:
 
@@ -56,7 +87,6 @@ public:
 private slots:
 
     void            think();
-
 };
 
 #endif // AMPANOV_H

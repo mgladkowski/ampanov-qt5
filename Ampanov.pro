@@ -23,7 +23,22 @@ SOURCES += \
     application/helpers.cpp \
     models/engine.cpp \
     core/database.cpp \
-    core/zeromq.cpp
+    core/zeromq.cpp \
+    broker/questrade.cpp \
+    broker/simulator.cpp \
+    models/account.cpp \
+    models/candle.cpp \
+    models/chart.cpp \
+    models/market.cpp \
+    models/option.cpp \
+    models/order.cpp \
+    models/scan.cpp \
+    models/stock.cpp \
+    models/strategy.cpp \
+    models/trade.cpp \
+    application/analyst.cpp \
+    application/scanner.cpp \
+    application/trader.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -39,7 +54,22 @@ HEADERS += \
     core/database.h \
     core/enums.h \
     core/zeromq.h \
-    core/zmq.hpp
+    core/zmq.hpp \
+    broker/questrade.h \
+    broker/simulator.h \
+    models/account.h \
+    models/candle.h \
+    models/chart.h \
+    models/market.h \
+    models/option.h \
+    models/order.h \
+    models/scan.h \
+    models/stock.h \
+    models/strategy.h \
+    models/trade.h \
+    application/analyst.h \
+    application/scanner.h \
+    application/trader.h
 
 
 # The following define makes your compiler emit warnings if you use
