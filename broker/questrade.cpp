@@ -405,69 +405,6 @@ bool QuestradeApi::update_candles_hour(int symbol_id, QDateTime from, QDateTime 
 
 
 /**
- * Candles - 30 minute
- */
-bool QuestradeApi::update_candles_thirty(int symbol_id, QDateTime from, QDateTime to) {
-
-    bool ret = false;
-    QString interval("HalfHour");
-    HttpRequest request;
-
-    request.path = "v1/markets/candles/";
-    request.path.append(QString::number(symbol_id));
-
-    QDateTime now = QDateTime::currentDateTime();
-    int offset = now.offsetFromUtc();
-    from.setOffsetFromUtc(offset);
-    QString start = from.toString(Qt::ISODate);
-    to.setOffsetFromUtc(offset);
-    QString end = to.toString(Qt::ISODate);
-
-    request.params["startTime"] = start;
-    request.params["endTime"] = end;
-    request.params["interval"] = "HalfHour";
-
-    if (httpRequest(request) != true) return false;
-
-    QJsonDocument doc = QJsonDocument::fromJson(lastResponse.toUtf8());
-    if(doc.isObject()) {
-
-        QJsonObject obj = doc.object();
-        QJsonArray array = obj.value("candles").toArray();
-
-        ret = true;
-        foreach (QJsonValue value, array) {
-
-            QJsonObject o = value.toObject();
-
-            QDateTime start = Helpers::atom_to_datetime(o.value("start").toString());
-            QDateTime end = Helpers::atom_to_datetime(o.value("end").toString());
-
-            Candle c = CandleModel::select_one(symbol_id, start, interval);
-
-            c.symbol_id = symbol_id;
-            c.start = start;
-            c.end = end;
-            c.open = o.value("open").toDouble();
-            c.close = o.value("close").toDouble();
-            c.high = o.value("high").toDouble();
-            c.low = o.value("low").toDouble();
-            c.volume = o.value("volume").toInt();
-            c.vwap = o.value("VWAP").toDouble();
-
-            if (c.rowid > 0) {
-                ret = CandleModel::save(c, interval);
-            } else {
-                ret = CandleModel::insert(c, interval);
-            }
-        }
-        return ret;
-    }
-    return false;
-}
-
-
-/**
  * Candles - minute
  */
 bool QuestradeApi::update_candles_minute(int symbol_id, QDateTime from, QDateTime to) {

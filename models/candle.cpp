@@ -85,28 +85,28 @@ Candle CandleModel::fetch(QSqlQuery & query) {
             }
             row.rowid              = map["rowid"].toInt();
             row.symbol_id          = map["symbol_id"].toInt();
-            row.start              .setTime_t(map["start"].toInt());
-            row.end                .setTime_t(map["end"].toInt());
-            row.open               = map["open"].toFloat();
-            row.high               = map["high"].toFloat();
-            row.low                = map["low"].toFloat();
-            row.close              = map["close"].toFloat();
+            row.start              .setTime_t(map["start"].toUInt());
+            row.end                .setTime_t(map["end"].toUInt());
+            row.open               = map["open"].toDouble();
+            row.high               = map["high"].toDouble();
+            row.low                = map["low"].toDouble();
+            row.close              = map["close"].toDouble();
             row.volume             = map["volume"].toInt();
-            row.vwap               = map["vwap"].toFloat();
+            row.vwap               = map["vwap"].toDouble();
 
-            row.true_range         = map["true_range"].toFloat();
-            row.abr_20             = map["abr_20"].toFloat();
-            row.afr_20             = map["afr_20"].toFloat();
-            row.atr_20             = map["atr_20"].toFloat();
-            row.vol_20             = map["vol_20"].toFloat();
-            row.ema_10             = map["ema_10"].toFloat();
-            row.ema_20             = map["ema_20"].toFloat();
-            row.ema_50             = map["ema_50"].toFloat();
-            row.sma_10             = map["sma_10"].toFloat();
-            row.sma_20             = map["sma_20"].toFloat();
-            row.sma_40             = map["sma_40"].toFloat();
-            row.sma_100            = map["sma_100"].toFloat();
-            row.sma_200            = map["sma_200"].toFloat();
+            row.true_range         = map["true_range"].toDouble();
+            row.abr_20             = map["abr_20"].toDouble();
+            row.afr_20             = map["afr_20"].toDouble();
+            row.atr_20             = map["atr_20"].toDouble();
+            row.vol_20             = map["vol_20"].toDouble();
+            row.ema_10             = map["ema_10"].toDouble();
+            row.ema_20             = map["ema_20"].toDouble();
+            row.ema_50             = map["ema_50"].toDouble();
+            row.sma_10             = map["sma_10"].toDouble();
+            row.sma_20             = map["sma_20"].toDouble();
+            row.sma_40             = map["sma_40"].toDouble();
+            row.sma_100            = map["sma_100"].toDouble();
+            row.sma_200            = map["sma_200"].toDouble();
 
             row.calculate();
         }
@@ -129,28 +129,28 @@ Candles CandleModel::fetchAll(QSqlQuery & query) {
             Candle row;
             row.rowid              = map["rowid"].toInt();
             row.symbol_id          = map["symbol_id"].toInt();
-            row.start              .setTime_t(map["start"].toInt());
-            row.end                .setTime_t(map["end"].toInt());
-            row.open               = map["open"].toFloat();
-            row.high               = map["high"].toFloat();
-            row.low                = map["low"].toFloat();
-            row.close              = map["close"].toFloat();
+            row.start              .setTime_t(map["start"].toUInt());
+            row.end                .setTime_t(map["end"].toUInt());
+            row.open               = map["open"].toDouble();
+            row.high               = map["high"].toDouble();
+            row.low                = map["low"].toDouble();
+            row.close              = map["close"].toDouble();
             row.volume             = map["volume"].toInt();
-            row.vwap               = map["vwap"].toFloat();
+            row.vwap               = map["vwap"].toDouble();
 
-            row.true_range         = map["true_range"].toFloat();
-            row.abr_20             = map["abr_20"].toFloat();
-            row.afr_20             = map["afr_20"].toFloat();
-            row.atr_20             = map["atr_20"].toFloat();
-            row.vol_20             = map["vol_20"].toFloat();
-            row.ema_10             = map["ema_10"].toFloat();
-            row.ema_20             = map["ema_20"].toFloat();
-            row.ema_50             = map["ema_50"].toFloat();
-            row.sma_10             = map["sma_10"].toFloat();
-            row.sma_20             = map["sma_20"].toFloat();
-            row.sma_40             = map["sma_40"].toFloat();
-            row.sma_100            = map["sma_100"].toFloat();
-            row.sma_200            = map["sma_200"].toFloat();
+            row.true_range         = map["true_range"].toDouble();
+            row.abr_20             = map["abr_20"].toDouble();
+            row.afr_20             = map["afr_20"].toDouble();
+            row.atr_20             = map["atr_20"].toDouble();
+            row.vol_20             = map["vol_20"].toDouble();
+            row.ema_10             = map["ema_10"].toDouble();
+            row.ema_20             = map["ema_20"].toDouble();
+            row.ema_50             = map["ema_50"].toDouble();
+            row.sma_10             = map["sma_10"].toDouble();
+            row.sma_20             = map["sma_20"].toDouble();
+            row.sma_40             = map["sma_40"].toDouble();
+            row.sma_100            = map["sma_100"].toDouble();
+            row.sma_200            = map["sma_200"].toDouble();
 
             row.calculate();
             rows.append(row);
@@ -169,7 +169,6 @@ Candles CandleModel::select_range(int symbol_id, QDateTime from, QDateTime to, Q
     QString table;
     if (interval == "OneDay") table = "candle";
     if (interval == "OneHour") table = "candle_hour";
-    if (interval == "HalfHour") table = "candle_thirty";
     if (interval == "OneMinute") table = "candle_minute";
     if (table.size() == 0) return rows;
 
@@ -205,7 +204,6 @@ Candles CandleModel::select_n(int symbol_id, QDateTime start, int n, QString int
     QString table;
     if (interval == "OneDay") table = "candle";
     if (interval == "OneHour") table = "candle_hour";
-    if (interval == "HalfHour") table = "candle_thirty";
     if (interval == "OneMinute") table = "candle_minute";
     if (table.size() == 0) return rows;
 
@@ -239,7 +237,6 @@ Candle CandleModel::select_one(int symbol_id, QDateTime from, QString interval) 
     QString table;
     if (interval == "OneDay") table = "candle";
     if (interval == "OneHour") table = "candle_hour";
-    if (interval == "HalfHour") table = "candle_thirty";
     if (interval == "OneMinute") table = "candle_minute";
     if (table.size() == 0) return row;
 
@@ -267,7 +264,6 @@ Candle CandleModel::select_last(int symbol_id, QString interval) {
     QString table;
     if (interval == "OneDay") table = "candle";
     if (interval == "OneHour") table = "candle_hour";
-    if (interval == "HalfHour") table = "candle_thirty";
     if (interval == "OneMinute") table = "candle_minute";
     if (table.size() == 0) return row;
 
@@ -295,7 +291,6 @@ Candle CandleModel::select_first(int symbol_id, QString interval) {
     QString table;
     if (interval == "OneDay") table = "candle";
     if (interval == "OneHour") table = "candle_hour";
-    if (interval == "HalfHour") table = "candle_thirty";
     if (interval == "OneMinute") table = "candle_minute";
     if (table.size() == 0) return row;
 
@@ -322,7 +317,6 @@ bool CandleModel::insert(Candle data, QString interval) {
     QString table;
     if (interval == "OneDay") table = "candle";
     if (interval == "OneHour") table = "candle_hour";
-    if (interval == "HalfHour") table = "candle_thirty";
     if (interval == "OneMinute") table = "candle_minute";
     if (table.size() == 0) return false;
 
@@ -378,7 +372,6 @@ bool CandleModel::save(Candle data, QString interval) {
     QString table;
     if (interval == "OneDay") table = "candle";
     if (interval == "OneHour") table = "candle_hour";
-    if (interval == "HalfHour") table = "candle_thirty";
     if (interval == "OneMinute") table = "candle_minute";
     if (table.size() == 0) return false;
 
@@ -425,7 +418,6 @@ bool CandleModel::savecalc(Candle data, QString interval) {
     QString table;
     if (interval == "OneDay") table = "candle";
     if (interval == "OneHour") table = "candle_hour";
-    if (interval == "HalfHour") table = "candle_thirty";
     if (interval == "OneMinute") table = "candle_minute";
     if (table.size() == 0) return false;
 

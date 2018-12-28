@@ -52,12 +52,6 @@ public:
     static Task     intraday_minute_pattern();
     static void     intraday_minute_pattern(int);
 
-    static Task     intraday_thirty_update();
-    static void     intraday_thirty_update(int);
-
-    static Task     intraday_thirty_pattern();
-    static void     intraday_thirty_pattern(int);
-
     static Task     intraday_hour_update();
     static void     intraday_hour_update(int);
 

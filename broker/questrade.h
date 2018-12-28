@@ -42,7 +42,6 @@ public:
 
     bool            update_candles_day(int symbol_id, QDateTime start, QDateTime end);
     bool            update_candles_hour(int symbol_id, QDateTime start, QDateTime end);
-    bool            update_candles_thirty(int symbol_id, QDateTime start, QDateTime end);
     bool            update_candles_minute(int symbol_id, QDateTime start, QDateTime end);
 
     bool            update_account_balances(Account account);

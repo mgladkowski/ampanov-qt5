@@ -41,12 +41,6 @@ public:
     static Task         intraday_minute_pattern();
     static bool         intraday_minute_pattern(int);
 
-    static Task         intraday_thirty_update();
-    static bool         intraday_thirty_update(int);
-
-    static Task         intraday_thirty_pattern();
-    static bool         intraday_thirty_pattern(int);
-
     static Task         intraday_hour_update();
     static bool         intraday_hour_update(int);
 

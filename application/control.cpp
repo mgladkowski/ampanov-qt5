@@ -368,66 +368,6 @@ Task Control::intraday_minute_pattern() {
 
 
 /**
- * Ampanov::intraday_thirty_update event
- */
-void Control::intraday_thirty_update(int state) {
-
-    bool result = EngineModel::intraday_thirty_update(state);
-    if (result == true) {
-
-        QTime now(QTime::currentTime());
-
-        QJsonObject data;
-        data["id"] = "intraday-thirty-update";
-        data["state"] = state;
-        data["time"] = now.toString();
-        data["data"] = "";
-
-        QJsonDocument doc(data);
-        QByteArray bytes = doc.toJson();
-        ZeroMq::push(bytes);
-
-        qInfo() << "[intraday] 30m update : " << qPrintable(TaskState::text(state));
-    }
-}
-
-Task Control::intraday_thirty_update() {
-
-    return EngineModel::intraday_thirty_update();
-}
-
-
-/**
- * Ampanov::intraday_thirty_pattern event
- */
-void Control::intraday_thirty_pattern(int state) {
-
-    bool result = EngineModel::intraday_thirty_pattern(state);
-    if (result == true) {
-
-        QTime now(QTime::currentTime());
-
-        QJsonObject data;
-        data["id"] = "intraday-thirty-pattern";
-        data["state"] = state;
-        data["time"] = now.toString();
-        data["data"] = "";
-
-        QJsonDocument doc(data);
-        QByteArray bytes = doc.toJson();
-        ZeroMq::push(bytes);
-
-        qInfo() << "[intraday] 30m candle pattern : " << qPrintable(TaskState::text(state));
-    }
-}
-
-Task Control::intraday_thirty_pattern() {
-
-    return EngineModel::intraday_thirty_pattern();
-}
-
-
-/**
  * Ampanov::intraday_hour_update event
  */
 void Control::intraday_hour_update(int state) {

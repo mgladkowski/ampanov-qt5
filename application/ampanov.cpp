@@ -21,10 +21,10 @@ Ampanov::Ampanov(QObject *parent) : QObject(parent) {
     loopTimer->setSingleShot(false);
     loopTimer->setInterval(loopInterval);
 
-    connect( loopTimer, SIGNAL(timeout()), this, SLOT(think()), Qt::QueuedConnection );
+    connect( loopTimer, SIGNAL(timeout()), this, SLOT(think()) );
 
     qDebug() << "Ampanov constructed";
-    qWarning() << "Using delayed market data";
+    qWarning() << "Market data : delayed";
 }
 
 
@@ -216,11 +216,11 @@ bool Ampanov::resume() {
  */
 void Ampanov::think() {
 
+    qDebug() << "[ ***  LOOP  *** ]";
+
     if (isRunning != true) return tx_done();
     if (isPaused == true) return tx_done();
     //if (Helpers::isWeekday() != true) return tx_done();
-
-    bool    result = false;
 
     QTime   time_now;
 
@@ -232,8 +232,7 @@ void Ampanov::think() {
 
     // CHECKLIST
 
-    result = Control::valid_checklist();
-    if (result != true) return tx_done();
+    if (Control::valid_checklist() != true) return tx_done();
 
 
     // IS AWAKE
@@ -279,7 +278,7 @@ void Ampanov::think() {
 
         if (Control::onopen_options_update().state != TaskState::Success) {
 
-            if ( onopen_options_update() != true ) return tx_done();
+            //if ( onopen_options_update() != true ) return tx_done();
         }
 
 
@@ -296,31 +295,8 @@ void Ampanov::think() {
         if ( now.hour() > 9 &&
              last.time.hour() < now.hour() ) {
 
-            // update candles
-
-            intraday_hour_update();
-
-            // check for candle patterns
-
-            intraday_hour_pattern();
-        }
-
-        // check thirty minutes
-
-        now = QTime::currentTime();
-        last = Control::intraday_thirty_update();
-
-        if ( now > QTime(10,0,0) &&
-             QTime(last.time.hour(), 0, 0)
-                < QTime(now.hour(), 0, 0) ) {
-
-            // update candles
-
-            intraday_thirty_update();
-
-            // check for candle patterns
-
-            intraday_thirty_pattern();
+            intraday_hour_update();         // update candles
+            intraday_hour_pattern();        // check for candle patterns
         }
 
         // check minute
@@ -330,34 +306,18 @@ void Ampanov::think() {
 
         if ( now > QTime(9,30,0) &&
              QTime(last.time.hour(), last.time.minute(), 0)
-                < QTime(now.hour(), now.minute(), 0) ) {
+             < QTime(now.hour(), now.minute(), 0) ) {
 
             // 3s delay seems to ensure questrade has current minute candle ready
             QThread::msleep(3000);
 
-            // update candles
+            intraday_minute_update();       // update candles
+            intraday_minute_pattern();      // check for candle patterns
 
-            intraday_minute_update();
-
-            // check for candle patterns
-
-            intraday_minute_pattern();
-
-            // update account balances
-
-            intraday_account_update();
-
-            // check on open trades
-
-            intraday_trades_open();
-
-            // check for new setups to create
-
-            intraday_trades_setup();
-
-            // check for triggered entries
-
-            intraday_trades_enter();
+            intraday_account_update();      // update account balances
+            intraday_trades_open();         // check on open trades
+            intraday_trades_setup();        // check for new setups to create
+            intraday_trades_enter();        // check for triggered entries
 
         }
 
@@ -372,7 +332,7 @@ void Ampanov::think() {
 
         if (Control::onclose_options_update().state != TaskState::Success) {
 
-            if ( onclose_options_update() != true ) return tx_done();
+            //if ( onclose_options_update() != true ) return tx_done();
         }
     }
 
@@ -414,6 +374,7 @@ void Ampanov::tx_fail() {
 }
 
 
+
 /**
  * TASKS
  */
@@ -434,12 +395,19 @@ bool Ampanov::onstart_markets_update() {
 
         Market m = MarketModel::select_one("NYSE");
 
-        if (m.rowid > 0 && now.date().daysTo(m.startTime.date()) == 0) {
+        int d = m.rowid > 0 && now.date().daysTo(m.startTime.date());
+
+        if (d == 0) {
 
             time_open_ext   = m.extendedStartTime.time();
             time_open       = m.startTime.time();
             time_close      = m.endTime.time();
             time_close_ext  = m.extendedEndTime.time();
+
+        } else if (d < 0) {
+
+            qInfo() << "Market data : today's data unavailable";
+            result = false;
 
         } else {
 
@@ -488,13 +456,16 @@ bool Ampanov::onstart_symbols_update() {
         result = questrade->update_candles_day(item.symbol_id, from, to);
         if (result != true) break;
 
-        QDateTime ifrom = last.start;
+        int n = static_cast<int>( last.start.daysTo(to) );
+        if (n > 59) n = 59;
+
+        QDateTime ifrom = to.addDays(-n);
         QDateTime ito = ifrom;
-        int n = last.start.daysTo(to);
+
         int i;
         for (i=0; i <= n; i++) {
 
-            ifrom = last.start.addDays(i);
+            ifrom = ifrom.addDays(1);
             ito = ifrom;
             ito.setTime(QTime(16,0,0));
 
@@ -504,22 +475,16 @@ bool Ampanov::onstart_symbols_update() {
             result = questrade->update_candles_hour(item.symbol_id, ifrom, ito);
             if (result != true) break;
 
-            // half hour candles
-
-            ifrom.setTime(QTime(9,30,0));
-            result = questrade->update_candles_thirty(item.symbol_id, ifrom, ito);
-            if (result != true) break;
-
             // minute candles
 
-            ifrom.setTime(QTime(9,30,0));
-            result = questrade->update_candles_minute(item.symbol_id, ifrom, ito);
-            if (result != true) break;
+//            ifrom.setTime(QTime(9,30,0));
+//            result = questrade->update_candles_minute(item.symbol_id, ifrom, ito);
+//            if (result != true) break;
         }
 
         // option chain
 
-        if (false && item.has_options == true) {
+        if (/* DISABLES CODE */ (false) && item.has_options == true) {
 
             result = questrade->update_option_chain(item.symbol_id);
             if (result != true) break;
@@ -677,67 +642,6 @@ bool Ampanov::intraday_minute_pattern() {
         Control::intraday_minute_pattern(TaskState::Success);
     } else {
         Control::intraday_minute_pattern(TaskState::Fail);
-    }
-
-    return result;
-}
-
-
-bool Ampanov::intraday_thirty_update() {
-
-    // thirty minute candle update
-
-    bool result = false;
-
-    Control::intraday_thirty_update(TaskState::Started);
-
-    QDateTime now(QDateTime::currentDateTime());
-    Candle last;
-
-    Stocks stocks = StockModel::select_all_active();
-    Stock item;
-
-    foreach (item, stocks) {
-
-        QDateTime ifrom = now;
-        ifrom.setTime(QTime(9, 30, 0));
-        last = CandleModel::select_last(item.symbol_id, "HalfHour");
-        if (last.start > ifrom) ifrom = last.start;
-
-        QDateTime ito = now;
-        ito.setTime(QTime(now.time().hour(), 0, 0));
-
-        result = questrade->update_candles_thirty(item.symbol_id, ifrom, ito);
-        if (result != true) break;
-
-    }
-    if (result == true) {
-        Control::intraday_thirty_update(TaskState::Success);
-    } else {
-        Control::intraday_thirty_update(TaskState::Fail);
-    }
-    return result;
-}
-
-
-bool Ampanov::intraday_thirty_pattern() {
-
-    bool result = false;
-
-    Control::intraday_thirty_pattern(TaskState::Started);
-
-    Stocks stocks = StockModel::select_all_active();
-    Stock item;
-
-    foreach (item, stocks) {
-
-        result = scanner->run_live(item.symbol_id, "HalfHour");
-    }
-
-    if (result == true) {
-        Control::intraday_thirty_pattern(TaskState::Success);
-    } else {
-        Control::intraday_thirty_pattern(TaskState::Fail);
     }
 
     return result;
@@ -945,14 +849,6 @@ bool Ampanov::onclose_symbols_update() {
             ifrom.setTime(QTime(9,0,0));
             ito.setTime(QTime(16,0,0));
             result = questrade->update_candles_hour(item.symbol_id, ifrom, ito);
-        }
-
-        // half hour candles
-
-        if (result == true) {
-            ifrom.setTime(QTime(9,30,0));
-            ito.setTime(QTime(16,0,0));
-            result = questrade->update_candles_thirty(item.symbol_id, ifrom, ito);
         }
 
         // minute candles

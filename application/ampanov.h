@@ -52,8 +52,6 @@ private:
     bool            onopen_options_update();
     bool            intraday_minute_update();
     bool            intraday_minute_pattern();
-    bool            intraday_thirty_update();
-    bool            intraday_thirty_pattern();
     bool            intraday_hour_update();
     bool            intraday_hour_pattern();
     bool            intraday_account_update();
