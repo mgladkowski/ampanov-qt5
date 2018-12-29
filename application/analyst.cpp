@@ -105,7 +105,7 @@ bool Analyst::calculate_all() {
     while (next()) {
 
         calculate_candle();
-        //calculate_chart();
+        calculate_chart();
 
         QThread::usleep(1000);
     }
@@ -115,29 +115,29 @@ bool Analyst::calculate_all() {
 
 bool Analyst::calculate_candle() {
 
-    float ema10multiplier = 2 / 11;
-    float ema20multiplier = 2 / 21;
-    float ema50multiplier = 2 / 51;
+    double ema10multiplier = 2 / 11;
+    double ema20multiplier = 2 / 21;
+    double ema50multiplier = 2 / 51;
 
     Candle c = candles[index];
     Candle p = candles[index-1];
 
     // chart properties at current index
 
-    float true_range_1 = c.high - c.low;
-    float true_range_2 = qFabs(c.high - p.close);
-    float true_range_3 = qFabs(c.low - p.close);
+    double true_range_1 = c.high - c.low;
+    double true_range_2 = qFabs(c.high - p.close);
+    double true_range_3 = qFabs(c.low - p.close);
 
     c.true_range = 0;
     c.true_range = true_range_1 > true_range_2 ? true_range_1 : true_range_2;
     c.true_range = c.true_range > true_range_3 ? c.true_range : true_range_3;
 
-    float x_sum_close = 0;
-    float x_sum_volume = 0;
-    float x_sum_body_range = 0;
-    float x_sum_full_range = 0;
-    float x_sum_true_range = 0;
-    float p_sma_50 = 0;
+    double x_sum_close = 0;
+    double x_sum_volume = 0;
+    double x_sum_body_range = 0;
+    double x_sum_full_range = 0;
+    double x_sum_true_range = 0;
+    double p_sma_50 = 0;
 
     c.vol_20 = 0;
     c.abr_20 = 0;
@@ -192,17 +192,17 @@ bool Analyst::calculate_candle() {
         }
     }
 
-    float ema10previous = (p.ema_10 > 0) ? p.ema_10 : p.sma_10;
+    double ema10previous = (p.ema_10 > 0) ? p.ema_10 : p.sma_10;
     c.ema_10 = (p.ema_10 > 0 || c.sma_10 > 0)
              ? ((c.close - ema10previous) * ema10multiplier) + ema10previous
              : 0;
 
-    float ema20previous = (p.ema_20 > 0) ? p.ema_20 : c.sma_20;
+    double ema20previous = (p.ema_20 > 0) ? p.ema_20 : c.sma_20;
     c.ema_20 = (p.ema_20 > 0 || c.sma_20 > 0)
              ? ((c.close - ema20previous) * ema20multiplier) + ema20previous
              : 0;
 
-    float ema50previous = (p.ema_50 > 0) ? p.ema_50 : p_sma_50;
+    double ema50previous = (p.ema_50 > 0) ? p.ema_50 : p_sma_50;
     c.ema_50 = (p.ema_50 > 0 || p_sma_50 > 0)
              ? ((c.close - ema50previous) * ema50multiplier) + ema50previous
              : 0;
@@ -217,6 +217,9 @@ bool Analyst::calculate_candle() {
 bool Analyst::calculate_chart() {
 
     if (index < 1) return false;
+
+    Candle c = candles[index];
+    Candle p = candles[index-1];
 
     // major trend
 
@@ -242,12 +245,6 @@ bool Analyst::calculate_chart() {
     if (candles[index].ema_10 < candles[index].ema_20)
         chart.trend_minor = "D";
 
-    // has DMA crossed
-    // yes : save peak as pivot and switch directions
-    // no : update peak
-
-    if (chart.trend_inter == "U"
-        && candles[index].sma_20) {};
 
 
     return true;

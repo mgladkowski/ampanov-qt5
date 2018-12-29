@@ -19,9 +19,9 @@ struct Stock {
     bool        is_quotable             = false;
     bool        has_options             = false;
     QString     security_type           = "";
-    float       prev_day_close_price    = 0;
-    float       high_price_52           = 0;
-    float       low_price_52            = 0;
+    double      prev_day_close_price    = 0;
+    double      high_price_52           = 0;
+    double      low_price_52            = 0;
     uint        average_vol_90          = 0;
     uint        average_vol_20          = 0;
     uint        outstanding_shares      = 0;
@@ -30,7 +30,7 @@ struct Stock {
     QString     industry_subgroup       = "";
     QDateTime   last_update;
     QString     last_update_by          = "";
-    float       last_price              = 0;
+    double      last_price              = 0;
     int         last_price_volume       = 0;
     QDateTime   last_price_time;
 
@@ -55,7 +55,7 @@ public:
     static Stock       select_one_row(int rowid);
 
     static bool        save(Stock data);
-    static bool        update_last_price(int symbol_id, float last_price, int last_volume, QDateTime last_time);
+    static bool        update_last_price(int symbol_id, double last_price, int last_volume, QDateTime last_time);
 
 private:
 

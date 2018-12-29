@@ -207,7 +207,7 @@ bool StockModel::save(Stock data) {
 /**
  * Update last price
  */
-bool StockModel::update_last_price(int symbol_id, float last_price, int last_volume, QDateTime last_time) {
+bool StockModel::update_last_price(int symbol_id, double last_price, int last_volume, QDateTime last_time) {
 
     QString sql = "UPDATE stock SET"
                   " last_price=:last_price,"

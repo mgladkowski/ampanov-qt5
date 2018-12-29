@@ -89,31 +89,28 @@ void Ampanov::recalc( QString symbol ) {
  */
 void Ampanov::replay( QString symbol, int strategy_id ) {
 
-    Q_UNUSED(symbol);
-    Q_UNUSED(strategy_id);
-//    isLive          = false;
-//    isReplay        = true;
-//    replayStrategy  = strategy_id;
+    isLive          = false;
+    isReplay        = true;
+    replayStrategy  = strategy_id;
 
-//    Stocks stocks = StockModel::select_all_active();
-//    Stock item;
+    Stocks stocks = StockModel::select_all_active();
+    Stock item;
 
-//    foreach (item, stocks) {
+    foreach (item, stocks) {
 
-//        if (symbol == "-A" || symbol == item.symbol) {
+        if (symbol == "-A" || symbol == item.symbol) {
 
-//            qInfo() << "Running backtest of " << item.symbol;
+            qInfo() << "Running back-test of " << item.symbol;
 
-//            replaySymbol = item.symbol;
+            replaySymbol = item.symbol;
 
-//            Candle candlef = CandleModel::select_first(item.symbol_id, "OneDay");
+            Candle candlef = CandleModel::select_first(item.symbol_id, "OneDay");
 
-//            qDebug() << candlef.start;
+            qDebug() << candlef.start;
 
 
-//        }
-//    }
-
+        }
+    }
     return;
 }
 
