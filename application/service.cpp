@@ -16,25 +16,28 @@ void Service::start() {
     // -C [-A][SYMBOL] : recalculate indicators
     // -H [-A][SYMBOL] : replay pattern analysis on entire history
 
-    if (args.size() >= 1) {
+    if (args.size() >= 2) {
 
         if (QRegExp("-C").indexIn(args.at(1)) != -1) {
 
-            if (args.size() >= 2) symbol = args.at(2);
+            if (args.size() >= 3) symbol = args.at(2);
             ampanov->recalc(symbol);
+            emit finished();
+            return;
 
         } else if (QRegExp("-H").indexIn(args.at(1)) != -1) {
 
-            if (args.size() >= 2) symbol = args.at(2);
+            if (args.size() >= 3) symbol = args.at(2);
             ampanov->replay(symbol, 1);
+            emit finished();
+            return;
 
         } else if (QRegExp("-D").indexIn(args.at(1)) != -1) {
 
             ampanov->dev();
+            emit finished();
+            return;
         }
-        qDebug() << "Done";
-        emit finished();
-        return;
     }
 
     if (ampanov->start() == true) {
