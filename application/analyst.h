@@ -10,7 +10,7 @@ public:
     Analyst();
     ~Analyst();
 
-    const int       CANDLES_MAX     = 10000;
+    const int       CANDLES_MAX     = 20000;
     const int       CANDLES_SLICE   = 200;
 
     int             symbol_id;
@@ -34,6 +34,8 @@ public:
     bool            calculate_all();
     bool            calculate_candle();
     bool            calculate_chart();
+
+    bool            analyze();
 };
 
 #endif // ANALYST_H

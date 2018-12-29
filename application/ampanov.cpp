@@ -100,15 +100,13 @@ void Ampanov::replay( QString symbol, int strategy_id ) {
 
         if (symbol == "-A" || symbol == item.symbol) {
 
-            qInfo() << "Running back-test of " << item.symbol;
+            Analyst chart;
 
-            replaySymbol = item.symbol;
+            qInfo() << "Charting " << item.symbol << "OneDay";
+            chart.load(item.symbol_id, "OneDay");
+            chart.analyze();
 
-            Candle candlef = CandleModel::select_first(item.symbol_id, "OneDay");
-
-            qDebug() << candlef.start;
-
-
+            QThread::msleep(3000);
         }
     }
     return;

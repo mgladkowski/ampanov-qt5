@@ -105,7 +105,6 @@ bool Analyst::calculate_all() {
     while (next()) {
 
         calculate_candle();
-        calculate_chart();
 
         QThread::usleep(1000);
     }
@@ -115,9 +114,9 @@ bool Analyst::calculate_all() {
 
 bool Analyst::calculate_candle() {
 
-    double ema10multiplier = 2 / 11;
-    double ema20multiplier = 2 / 21;
-    double ema50multiplier = 2 / 51;
+    double ema10multiplier = 2.0 / 11.0;
+    double ema20multiplier = 2.0 / 21.0;
+    double ema50multiplier = 2.0 / 51.0;
 
     Candle c = candles[index];
     Candle p = candles[index-1];
@@ -169,42 +168,42 @@ bool Analyst::calculate_candle() {
         x_sum_true_range    += cx.true_range;
 
         if (i == 10) {
-            c.sma_10 = x_sum_close / 10;
+            c.sma_10 = x_sum_close / 10.0;
         }
         if (i == 20) {
-            c.sma_20 = x_sum_close / 20;
-            c.vol_20 = x_sum_volume / 20;
-            c.abr_20 = x_sum_body_range / 20;
-            c.afr_20 = x_sum_full_range / 20;
-            c.atr_20 = x_sum_true_range / 20;
+            c.sma_20 = x_sum_close / 20.0;
+            c.vol_20 = x_sum_volume / 20.0;
+            c.abr_20 = x_sum_body_range / 20.0;
+            c.afr_20 = x_sum_full_range / 20.0;
+            c.atr_20 = x_sum_true_range / 20.0;
         }
         if (i == 40) {
-            c.sma_40 = x_sum_close / 40;
+            c.sma_40 = x_sum_close / 40.0;
         }
         if (i == 50) {
-            p_sma_50 = x_sum_close / 50;
+            p_sma_50 = x_sum_close / 50.0;
         }
         if (i == 100) {
-            c.sma_100 = x_sum_close / 100;
+            c.sma_100 = x_sum_close / 100.0;
         }
         if (i == 200) {
-            c.sma_200 = x_sum_close / 200;
+            c.sma_200 = x_sum_close / 200.0;
         }
     }
 
-    double ema10previous = (p.ema_10 > 0) ? p.ema_10 : p.sma_10;
-    c.ema_10 = (p.ema_10 > 0 || c.sma_10 > 0)
-             ? ((c.close - ema10previous) * ema10multiplier) + ema10previous
+    double emaprev10 = (p.ema_10 > 0) ? p.ema_10 : p.sma_10;
+    c.ema_10 = (emaprev10 > 0)
+             ? ((c.close - emaprev10) * ema10multiplier) + emaprev10
              : 0;
 
-    double ema20previous = (p.ema_20 > 0) ? p.ema_20 : c.sma_20;
-    c.ema_20 = (p.ema_20 > 0 || c.sma_20 > 0)
-             ? ((c.close - ema20previous) * ema20multiplier) + ema20previous
+    double ema20prev = (p.ema_20 > 0) ? p.ema_20 : c.sma_20;
+    c.ema_20 = (ema20prev > 0)
+             ? ((c.close - ema20prev) * ema20multiplier) + ema20prev
              : 0;
 
-    double ema50previous = (p.ema_50 > 0) ? p.ema_50 : p_sma_50;
-    c.ema_50 = (p.ema_50 > 0 || p_sma_50 > 0)
-             ? ((c.close - ema50previous) * ema50multiplier) + ema50previous
+    double ema50prev = (p.ema_50 > 0) ? p.ema_50 : p_sma_50;
+    c.ema_50 = (ema50prev > 0)
+             ? ((c.close - ema50prev) * ema50multiplier) + ema50prev
              : 0;
 
     CandleModel::savecalc(c, interval);
@@ -216,36 +215,45 @@ bool Analyst::calculate_candle() {
 
 bool Analyst::calculate_chart() {
 
-    if (index < 1) return false;
+    if (index < 50) return false;
 
     Candle c = candles[index];
     Candle p = candles[index-1];
 
-    // major trend
+    if ( ((c.close > c.ema_10) && (c.ema_10 > c.ema_20) && (c.ema_20 > c.ema_50)) &&
+        !((p.close > p.ema_10) && (p.ema_10 > p.ema_20) && (p.ema_20 > p.ema_50)) ){
 
-    if (candles[index].sma_100 > candles[index].sma_200)
-        chart.trend_major = "U";
+        qDebug() << c.start.toLocalTime() << "  "
+                 << c.close << " "
+                 << c.ema_10 << " "
+                 << c.ema_20 << " "
+                 << c.ema_50 << " bull";
+    }
+    else if ( ((c.close < c.ema_10) && (c.ema_10 < c.ema_20) && (c.ema_20 < c.ema_50)) &&
+             !((p.close < p.ema_10) && (p.ema_10 < p.ema_20) && (p.ema_20 < p.ema_50)) ){
 
-    if (candles[index].sma_100 < candles[index].sma_200)
-        chart.trend_major = "D";
-
-    // intermediate trend
-
-    if (candles[index].sma_20 > candles[index-2].sma_20)
-        chart.trend_inter = "U";
-
-    if (candles[index].sma_20 < candles[index-2].sma_20)
-        chart.trend_inter = "D";
-
-    // minor trend
-
-    if (candles[index].ema_10 > candles[index].ema_20)
-        chart.trend_minor = "U";
-
-    if (candles[index].ema_10 < candles[index].ema_20)
-        chart.trend_minor = "D";
-
-
+        qDebug() << c.start.toLocalTime() << "  "
+                 << c.close << " "
+                 << c.ema_10 << " "
+                 << c.ema_20 << " "
+                 << c.ema_50 << " bear";
+    }
 
     return true;
 }
+
+
+bool Analyst::analyze() {
+
+    first();
+
+    while (next()) {
+
+        calculate_chart();
+
+        QThread::usleep(1000);
+    }
+    return true;
+}
+
+
