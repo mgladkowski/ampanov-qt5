@@ -22,19 +22,18 @@ void Service::start() {
 
             if (i+1 <= args.size()) symbol = args.at(i+1);
             ampanov->recalc(symbol);
-            return;
 
         } else if (QRegExp("-H").indexIn(args.at(i)) != -1) {
 
             if (i+1 <= args.size()) symbol = args.at(i+1);
             ampanov->replay(symbol, 1);
-            return;
 
         } else if (QRegExp("-D").indexIn(args.at(i)) != -1) {
 
             ampanov->dev();
-            return;
         }
+        emit finished();
+        return;
     }
 
     if (ampanov->start() == true) {

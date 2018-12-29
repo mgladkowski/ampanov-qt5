@@ -60,31 +60,26 @@ void Ampanov::dev() {
  */
 void Ampanov::recalc( QString symbol ) {
 
-    Q_UNUSED(symbol);
-//    Stocks stocks = StockModel::select_all_active();
-//    Stock item;
+    Stocks stocks = StockModel::select_all_active();
+    Stock item;
 
-//    foreach (item, stocks) {
+    foreach (item, stocks) {
 
-//        if (symbol == "-A" || symbol == item.symbol) {
+        if (symbol == "-A" || symbol == item.symbol) {
 
-//            Analyst chart;
+            Analyst chart;
 
-//            qInfo() << "Recalculating indicators for " << item.symbol << "OneDay";
-//            chart.load(item.symbol_id, "OneDay");
-//            chart.calculate_all();
+            qInfo() << "Recalculating indicators for " << item.symbol << "OneDay";
+            chart.load(item.symbol_id, "OneDay");
+            chart.calculate_all();
 
-//            qInfo() << "Recalculating indicators for " << item.symbol << "OneHour";
-//            chart.load(item.symbol_id, "OneHour");
-//            chart.calculate_all();
+            qInfo() << "Recalculating indicators for " << item.symbol << "OneHour";
+            chart.load(item.symbol_id, "OneHour");
+            chart.calculate_all();
 
-//            qInfo() << "Recalculating indicators for " << item.symbol << "HalfHour";
-//            chart.load(item.symbol_id, "HalfHour");
-//            chart.calculate_all();
-
-//            QThread::msleep(3000);
-//        }
-//    }
+            QThread::msleep(3000);
+        }
+    }
     return;
 }
 
@@ -467,7 +462,7 @@ bool Ampanov::onstart_symbols_update() {
 
             ifrom = ifrom.addDays(1);
             ito = ifrom;
-            ito.setTime(QTime(16,0,0));
+            ito.setTime(QTime(15,59,59));
 
             // hour candles
 
@@ -477,9 +472,9 @@ bool Ampanov::onstart_symbols_update() {
 
             // minute candles
 
-//            ifrom.setTime(QTime(9,30,0));
-//            result = questrade->update_candles_minute(item.symbol_id, ifrom, ito);
-//            if (result != true) break;
+            ifrom.setTime(QTime(9,30,0));
+            result = questrade->update_candles_minute(item.symbol_id, ifrom, ito);
+            if (result != true) break;
         }
 
         // option chain
@@ -847,7 +842,7 @@ bool Ampanov::onclose_symbols_update() {
 
         if (result == true) {
             ifrom.setTime(QTime(9,0,0));
-            ito.setTime(QTime(16,0,0));
+            ito.setTime(QTime(15,59,59));
             result = questrade->update_candles_hour(item.symbol_id, ifrom, ito);
         }
 
@@ -855,7 +850,7 @@ bool Ampanov::onclose_symbols_update() {
 
         if (result == true) {
             ifrom.setTime(QTime(9,30,0));
-            ito.setTime(QTime(16,0,0));
+            ito.setTime(QTime(15,59,59));
             result = questrade->update_candles_minute(item.symbol_id, ifrom, ito);
         }
 
