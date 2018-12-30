@@ -28,17 +28,15 @@ SOURCES += \
     broker/simulator.cpp \
     models/account.cpp \
     models/candle.cpp \
-    models/chart.cpp \
     models/market.cpp \
     models/option.cpp \
     models/order.cpp \
-    models/scan.cpp \
     models/stock.cpp \
     models/strategy.cpp \
     models/trade.cpp \
-    application/analyst.cpp \
     application/scanner.cpp \
-    application/trader.cpp
+    application/trader.cpp \
+    models/candleset.cpp
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -59,17 +57,15 @@ HEADERS += \
     broker/simulator.h \
     models/account.h \
     models/candle.h \
-    models/chart.h \
     models/market.h \
     models/option.h \
     models/order.h \
-    models/scan.h \
     models/stock.h \
     models/strategy.h \
     models/trade.h \
-    application/analyst.h \
     application/scanner.h \
-    application/trader.h
+    application/trader.h \
+    models/candleset.h
 
 
 # The following define makes your compiler emit warnings if you use

@@ -32,6 +32,9 @@ public:
     double      sma_100;
     double      sma_200;
 
+    int         signal_candle;
+    int         signal_chart;
+
     bool        calculate();
 
     bool        bullish;
@@ -90,6 +93,9 @@ public:
     static bool     insert(Candle data, QString interval = "OneDay");
     static bool     save(Candle data, QString interval = "OneDay");
     static bool     savecalc(Candle data, QString interval = "OneDay");
+
+    static bool     reset();
+    static bool     optimize();
 
 private:
 

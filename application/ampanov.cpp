@@ -63,23 +63,32 @@ void Ampanov::recalc( QString symbol ) {
     Stocks stocks = StockModel::select_all_active();
     Stock item;
 
+    if (symbol == "-A") {
+
+        qInfo() << "Resetting data";
+        CandleModel::reset();
+    }
+
     foreach (item, stocks) {
 
         if (symbol == "-A" || symbol == item.symbol) {
 
-            Analyst chart;
+            qInfo() << "Recalculating analysis of " << item.symbol << "OneDay";
+            scanner->run_recalc( item.symbol_id, "OneDay" );
 
-            qInfo() << "Recalculating indicators for " << item.symbol << "OneDay";
-            chart.load(item.symbol_id, "OneDay");
-            chart.calculate_all_candles();
-
-            qInfo() << "Recalculating indicators for " << item.symbol << "OneHour";
-            chart.load(item.symbol_id, "OneHour");
-            chart.calculate_all_candles();
+            qInfo() << "Recalculating analysis of " << item.symbol << "OneHour";
+            scanner->run_recalc( item.symbol_id, "OneHour" );
 
             QThread::msleep(3000);
         }
     }
+
+    if (symbol == "-A") {
+
+        qInfo() << "Rebuilding indexes";
+        CandleModel::optimize();
+    }
+
     return;
 }
 
@@ -93,8 +102,6 @@ void Ampanov::replay( QString symbol, int strategy_id ) {
     isReplay        = true;
     replayStrategy  = strategy_id;
 
-    ChartModel::truncate(); // ! clears previous chart points
-
     Stocks stocks = StockModel::select_all_active();
     Stock item;
 
@@ -102,11 +109,7 @@ void Ampanov::replay( QString symbol, int strategy_id ) {
 
         if (symbol == "-A" || symbol == item.symbol) {
 
-            Analyst chart;
-
-            qInfo() << "Charting " << item.symbol << "OneDay";
-            chart.load(item.symbol_id, "OneDay");
-            chart.calculate_all_charts();
+            qInfo() << "Back-trading " << item.symbol << "OneDay";
 
             QThread::msleep(3000);
         }
@@ -310,7 +313,6 @@ void Ampanov::think() {
             intraday_trades_open();         // check on open trades
             intraday_trades_setup();        // check for new setups to create
             intraday_trades_enter();        // check for triggered entries
-
         }
 
     }
@@ -505,10 +507,10 @@ bool Ampanov::onstart_symbols_pattern() {
     Stocks stocks = StockModel::select_all_active();
     Stock item;
 
-    foreach (item, stocks) {
-
-        result = scanner->run_live(item.symbol_id, "OneDay");
-    }
+//    foreach (item, stocks) {
+//        result = scanner->run_live( item.symbol_id, "OneDay" );
+//    }
+    result = true;
 
     if (result == true) {
         Control::onstart_symbols_pattern(TaskState::Success);
@@ -625,7 +627,6 @@ bool Ampanov::intraday_minute_pattern() {
     Stock item;
 
 //    foreach (item, stocks) {
-
 //        result = scanner->run_live(item.symbol_id, "OneMinute");
 //    }
     result = true;
@@ -687,10 +688,10 @@ bool Ampanov::intraday_hour_pattern() {
     Stocks stocks = StockModel::select_all_active();
     Stock item;
 
-    foreach (item, stocks) {
-
-        result = scanner->run_live(item.symbol_id, "OneHour");
-    }
+//    foreach (item, stocks) {
+//        result = scanner->run_live( item.symbol_id, "OneHour" );
+//    }
+    result = true;
 
     if (result == true) {
         Control::intraday_hour_pattern(TaskState::Success);
@@ -876,12 +877,13 @@ bool Ampanov::onclose_symbols_pattern() {
     Stocks stocks = StockModel::select_all_active();
     Stock item;
 
-    foreach (item, stocks) {
+//    foreach (item, stocks) {
+//        result = scanner->run_live(item.symbol_id, "OneDay");
+//        result = result
+//              && scanner->run_live(item.symbol_id, "OneHour");
+//    }
+    result = true;
 
-        result = scanner->run_live(item.symbol_id, "OneDay");
-        result = result
-              && scanner->run_live(item.symbol_id, "OneHour");
-    }
     if (result == true) {
         Control::onclose_symbols_pattern(TaskState::Success);
     } else {

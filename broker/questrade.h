@@ -10,7 +10,7 @@
 #include "models/option.h"
 #include "models/order.h"
 #include "models/trade.h"
-#include "application/analyst.h"
+#include "application/scanner.h"
 
 
 struct HttpRequest {

@@ -1,6 +1,9 @@
 #include "candle.h"
 
 
+/**
+ * Calculated on-load, not stored in database
+ */
 bool Candle::calculate() {
 
     // derived from candle core
@@ -25,11 +28,11 @@ bool Candle::calculate() {
 
     wick_range          = wick_upper_range + wick_lower_range;
 
-    wick_upper_size     = ( full_range == 0 )
+    wick_upper_size     = ( full_range == 0.0 )
                           ? 0
                           : wick_upper_range / full_range;
 
-    wick_lower_size     = ( full_range == 0 )
+    wick_lower_size     = ( full_range == 0.0 )
                           ? 0
                           : wick_lower_range / full_range;
 
@@ -107,6 +110,8 @@ Candle CandleModel::fetch(QSqlQuery & query) {
             row.sma_40             = map["sma_40"].toDouble();
             row.sma_100            = map["sma_100"].toDouble();
             row.sma_200            = map["sma_200"].toDouble();
+            row.signal_candle      = map["signal_candle"].toInt();
+            row.signal_chart       = map["signal_chart"].toInt();
 
             row.calculate();
         }
@@ -151,6 +156,8 @@ Candles CandleModel::fetchAll(QSqlQuery & query) {
             row.sma_40             = map["sma_40"].toDouble();
             row.sma_100            = map["sma_100"].toDouble();
             row.sma_200            = map["sma_200"].toDouble();
+            row.signal_candle      = map["signal_candle"].toInt();
+            row.signal_chart       = map["signal_chart"].toInt();
 
             row.calculate();
             rows.append(row);
@@ -436,7 +443,9 @@ bool CandleModel::savecalc(Candle data, QString interval) {
                   " sma_40=:sma_40,"
                   " sma_100=:sma_100,"
                   " sma_200=:sma_200,"
-                  " vol_20=:vol_20"
+                  " vol_20=:vol_20,"
+                  " signal_candle=:signal_candle,"
+                  " signal_chart=:signal_chart"
                   " WHERE rowid=:rowid;");
 
     QSqlQuery q(Database::database());
@@ -455,6 +464,41 @@ bool CandleModel::savecalc(Candle data, QString interval) {
     q.bindValue(":sma_100", data.sma_100);
     q.bindValue(":sma_200", data.sma_200);
     q.bindValue(":vol_20", data.vol_20);
+    q.bindValue(":signal_candle", data.signal_candle);
+    q.bindValue(":signal_chart", data.signal_chart);
+    bool result = q.exec();
+    q.finish();
+    return result;
+}
+
+
+/**
+ * Reset signal data
+ */
+bool CandleModel::reset() {
+
+    QString sql = "UPDATE candle SET signal_candle=NULL,signal_chart=NULL;"
+                  "UPDATE candle_hour SET signal_candle=NULL,signal_chart=NULL;";
+
+    QSqlQuery q(Database::database());
+    q.prepare(sql);
+    bool result = q.exec();
+    q.finish();
+    return result;
+}
+
+
+/**
+ * Rebuild indexes
+ */
+bool CandleModel::optimize() {
+
+    QString sql = "ANALYZE TABLE candle;"
+                  "ANALYZE TABLE candle_hour;"
+                  "ANALYZE TABLE candle_minute;";
+
+    QSqlQuery q(Database::database());
+    q.prepare(sql);
     bool result = q.exec();
     q.finish();
     return result;

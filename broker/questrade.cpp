@@ -10,6 +10,7 @@
 #include <QUrlQuery>
 #include "questrade.h"
 #include "application/helpers.h"
+#include "application/scanner.h"
 
 
 QuestradeApi::QuestradeApi(QObject *parent) : QObject(parent) {
@@ -56,15 +57,14 @@ bool QuestradeApi::update_markets() {
 
             QJsonObject o = value.toObject();
 
-            QString market = o.value("name").toString();
-            Market m = MarketModel::select_one(market);
-
+            QString market          = o.value("name").toString();
+            Market m                = MarketModel::select_one(market);
             m.name = market;
-            m.extendedStartTime = Helpers::atom_to_datetime(o.value("extendedStartTime").toString());
-            m.startTime = Helpers::atom_to_datetime(o.value("startTime").toString());
-            m.endTime = Helpers::atom_to_datetime(o.value("endTime").toString());
-            m.extendedEndTime = Helpers::atom_to_datetime(o.value("extendedEndTime").toString());
-            m.defaultTradingVenue = o.value("defaultTradingVenue").toString();
+            m.extendedStartTime     = Helpers::atom_to_datetime(o.value("extendedStartTime").toString());
+            m.startTime             = Helpers::atom_to_datetime(o.value("startTime").toString());
+            m.endTime               = Helpers::atom_to_datetime(o.value("endTime").toString());
+            m.extendedEndTime       = Helpers::atom_to_datetime(o.value("extendedEndTime").toString());
+            m.defaultTradingVenue   = o.value("defaultTradingVenue").toString();
 
             if (m.rowid > 0) {
                 MarketModel::save(m);
@@ -102,25 +102,25 @@ bool QuestradeApi::update_symbol(int symbol_id) {
 
             QJsonObject o = value.toObject();
             if (s.symbol_id != o.value("symbolId").toInt()) return false;
-            s.symbol_id = o.value("symbolId").toInt();
-            s.symbol = o.value("symbol").toString();
-            s.description = o.value("description").toString();
-            s.currency = o.value("currency").toString();
-            s.exchange = o.value("listingExchange").toString();
-            s.trade_unit = o.value("tradeUnit").toInt();
-            s.is_tradable = o.value("isTradable").toBool();
-            s.is_quotable = o.value("isQuotable").toBool();
-            s.has_options = o.value("hasOptions").toBool();
-            s.security_type = o.value("securityType").toString();
-            s.prev_day_close_price = o.value("prevDayClosePrice").toDouble();
-            s.high_price_52 = o.value("highPrice52").toDouble();
-            s.low_price_52 = o.value("lowPrice52").toDouble();
-            s.average_vol_90 = o.value("averageVol3Months").toDouble();
-            s.average_vol_20 = o.value("averageVol20Days").toDouble();
-            s.outstanding_shares = o.value("outstandingShares").toVariant().toUInt();
-            s.industry_sector = o.value("industrySector").isString() ? o.value("industrySector").toString() : QString("");
-            s.industry_group = o.value("industryGroup").isString() ? o.value("industryGroup").toString() : QString("");
-            s.industry_subgroup = o.value("industrySubgroup").isString() ? o.value("industrySubgroup").toString() : QString("");
+            s.symbol_id             = o.value("symbolId").toInt();
+            s.symbol                = o.value("symbol").toString();
+            s.description           = o.value("description").toString();
+            s.currency              = o.value("currency").toString();
+            s.exchange              = o.value("listingExchange").toString();
+            s.trade_unit            = o.value("tradeUnit").toInt();
+            s.is_tradable           = o.value("isTradable").toBool();
+            s.is_quotable           = o.value("isQuotable").toBool();
+            s.has_options           = o.value("hasOptions").toBool();
+            s.security_type         = o.value("securityType").toString();
+            s.prev_day_close_price  = o.value("prevDayClosePrice").toDouble();
+            s.high_price_52         = o.value("highPrice52").toDouble();
+            s.low_price_52          = o.value("lowPrice52").toDouble();
+            s.average_vol_90        = o.value("averageVol3Months").toVariant().toUInt();
+            s.average_vol_20        = o.value("averageVol20Days").toVariant().toUInt();
+            s.outstanding_shares    = o.value("outstandingShares").toVariant().toUInt();
+            s.industry_sector       = o.value("industrySector").isString() ? o.value("industrySector").toString() : QString("");
+            s.industry_group        = o.value("industryGroup").isString() ? o.value("industryGroup").toString() : QString("");
+            s.industry_subgroup     = o.value("industrySubgroup").isString() ? o.value("industrySubgroup").toString() : QString("");
 
             bool result = StockModel::save(s);
             return result;
@@ -170,7 +170,7 @@ bool QuestradeApi::update_option_chain(int symbol_id) {
 
                     QJsonObject o = value.toObject();
 
-                    float strike = o.value("strikePrice").toDouble();
+                    float strike = o.value("strikePrice").toVariant().toFloat();
 
                     OptionChain chain = OptionChainModel::select_one_strike(s.symbol_id, expiry, strike);
 
@@ -232,32 +232,32 @@ bool QuestradeApi::update_option(int symbol_id) {
 
             QJsonObject o = value.toObject();
 
-            float symbol_id = o.value("symbolId").toInt();
+            int symbol_id = o.value("symbolId").toInt();
 
             Option option = OptionModel::select_one_symbol(symbol_id);
 
-            option.underlying_id = s.symbol_id;
-            option.underlying = s.symbol;
-            option.symbol_id = symbol_id;
-            option.symbol = o.value("symbol").toString();
-            option.bid_price = o.value("bidPrice").toDouble();
-            option.ask_price = o.value("askPrice").toDouble();
-            option.last_trade_price_trhrs = o.value("lastTradePriceTrHrs").toDouble();
-            option.last_trade_price = o.value("lastTradePrice").toDouble();
-            option.volume = o.value("volume").toInt();
-            option.open = o.value("openPrice").toDouble();
-            option.high = o.value("highPrice").toDouble();
-            option.low = o.value("lowPrice").toDouble();
-            option.volatility = o.value("volatility").toDouble();
-            option.delta = o.value("delta").toDouble();
-            option.gamma = o.value("gamma").toDouble();
-            option.theta = o.value("theta").toDouble();
-            option.vega = o.value("vega").toDouble();
-            option.rho = o.value("rho").toDouble();
-            option.open_interest = o.value("openInterest").toInt();
-            option.delay = o.value("delay").toInt();
-            option.is_halted = o.value("isHalted").toBool();
-            option.vwap = o.value("VWAP").toDouble();
+            option.underlying_id    = s.symbol_id;
+            option.underlying       = s.symbol;
+            option.symbol_id        = symbol_id;
+            option.symbol           = o.value("symbol").toString();
+            option.bid_price        = o.value("bidPrice").toVariant().toFloat();
+            option.ask_price        = o.value("askPrice").toVariant().toFloat();
+            option.last_trade_price_trhrs = o.value("lastTradePriceTrHrs").toVariant().toFloat();
+            option.last_trade_price = o.value("lastTradePrice").toVariant().toFloat();
+            option.volume           = o.value("volume").toInt();
+            option.open             = o.value("openPrice").toVariant().toFloat();
+            option.high             = o.value("highPrice").toVariant().toFloat();
+            option.low              = o.value("lowPrice").toVariant().toFloat();
+            option.volatility       = o.value("volatility").toVariant().toFloat();
+            option.delta            = o.value("delta").toVariant().toFloat();
+            option.gamma            = o.value("gamma").toVariant().toFloat();
+            option.theta            = o.value("theta").toVariant().toFloat();
+            option.vega             = o.value("vega").toVariant().toFloat();
+            option.rho              = o.value("rho").toVariant().toFloat();
+            option.open_interest    = o.value("openInterest").toInt();
+            option.delay            = o.value("delay").toInt();
+            option.is_halted        = o.value("isHalted").toBool();
+            option.vwap             = o.value("VWAP").toVariant().toFloat();
 
             OptionModel::save(option);
             QThread::msleep(20);
@@ -309,14 +309,14 @@ bool QuestradeApi::update_candles_day(int symbol_id, QDateTime from, QDateTime t
             Candle c = CandleModel::select_one(symbol_id, start);
 
             c.symbol_id = symbol_id;
-            c.start = start;
-            c.end = end;
-            c.open = o.value("open").toDouble();
-            c.close = o.value("close").toDouble();
-            c.high = o.value("high").toDouble();
-            c.low = o.value("low").toDouble();
-            c.volume = o.value("volume").toInt();
-            c.vwap = o.value("VWAP").toDouble();
+            c.start     = start;
+            c.end       = end;
+            c.open      = o.value("open").toDouble();
+            c.close     = o.value("close").toDouble();
+            c.high      = o.value("high").toDouble();
+            c.low       = o.value("low").toDouble();
+            c.volume    = o.value("volume").toInt();
+            c.vwap      = o.value("VWAP").toDouble();
 
             if (c.rowid > 0) {
                 ret = CandleModel::save(c);
@@ -324,11 +324,12 @@ bool QuestradeApi::update_candles_day(int symbol_id, QDateTime from, QDateTime t
                 ret = CandleModel::insert(c);
             }
 
-            StockModel::update_last_price(c.symbol_id, c.close, c.volume, c.end);
+            if (ret == true) {
 
-            Analyst chart;
-            if (chart.loadslice(c.symbol_id, "OneDay") == true) {
-                chart.calculate_candle();
+                StockModel::update_last_price(c.symbol_id, c.close, c.volume, c.end);
+
+                Scanner chart;
+                ret = chart.run_live(c.symbol_id, "OneDay");
             }
         }
         return ret;
@@ -379,23 +380,27 @@ bool QuestradeApi::update_candles_hour(int symbol_id, QDateTime from, QDateTime 
             Candle c = CandleModel::select_one(symbol_id, start, interval);
 
             c.symbol_id = symbol_id;
-            c.start = start;
-            c.end = end;
-            c.open = o.value("open").toDouble();
-            c.close = o.value("close").toDouble();
-            c.high = o.value("high").toDouble();
-            c.low = o.value("low").toDouble();
-            c.volume = o.value("volume").toInt();
-            c.vwap = o.value("VWAP").toDouble();
+            c.start     = start;
+            c.end       = end;
+            c.open      = o.value("open").toDouble();
+            c.close     = o.value("close").toDouble();
+            c.high      = o.value("high").toDouble();
+            c.low       = o.value("low").toDouble();
+            c.volume    = o.value("volume").toInt();
+            c.vwap      = o.value("VWAP").toDouble();
 
             if (c.rowid > 0) {
                 ret = CandleModel::save(c, interval);
             } else {
                 ret = CandleModel::insert(c, interval);
             }
-            Analyst chart;
-            if (chart.loadslice(c.symbol_id, "OneHour") == true) {
-                chart.calculate_candle();
+
+            if (ret == true) {
+
+                StockModel::update_last_price(c.symbol_id, c.close, c.volume, c.end);
+
+                Scanner chart;
+                ret = chart.run_live(c.symbol_id, "OneHour");
             }
         }
         return ret;
@@ -447,14 +452,14 @@ bool QuestradeApi::update_candles_minute(int symbol_id, QDateTime from, QDateTim
             Candle c = CandleModel::select_one(symbol_id, start, interval);
 
             c.symbol_id = symbol_id;
-            c.start = start;
-            c.end = end;
-            c.open = o.value("open").toDouble();
-            c.close = o.value("close").toDouble();
-            c.high = o.value("high").toDouble();
-            c.low = o.value("low").toDouble();
-            c.volume = o.value("volume").toInt();
-            c.vwap = o.value("VWAP").toDouble();
+            c.start     = start;
+            c.end       = end;
+            c.open      = o.value("open").toDouble();
+            c.close     = o.value("close").toDouble();
+            c.high      = o.value("high").toDouble();
+            c.low       = o.value("low").toDouble();
+            c.volume    = o.value("volume").toInt();
+            c.vwap      = o.value("VWAP").toDouble();
 
             if (c.rowid > 0) {
                 result = CandleModel::save(c, interval);
@@ -494,11 +499,11 @@ bool QuestradeApi::update_account_balances(Account account) {
 
             if (currency == account.currency) {
 
-                account.cash                = o.value("cash").toDouble();
-                account.market_value        = o.value("marketValue").toDouble();
-                account.total_equity        = o.value("totalEquity").toDouble();
-                account.buying_power        = o.value("buyingPower").toDouble();
-                account.maintenance_excess  = o.value("maintenanceExcess").toDouble();
+                account.cash                = o.value("cash").toVariant().toFloat();
+                account.market_value        = o.value("marketValue").toVariant().toFloat();
+                account.total_equity        = o.value("totalEquity").toVariant().toFloat();
+                account.buying_power        = o.value("buyingPower").toVariant().toFloat();
+                account.maintenance_excess  = o.value("maintenanceExcess").toVariant().toFloat();
                 account.is_real_time        = o.value("isRealTime").toBool();
 
                 bool result = AccountModel::save_balance(account);
@@ -542,12 +547,12 @@ bool QuestradeApi::update_account_positions(Account account) {
             t.symbol                = o.value("symbol").toString();
             t.position_open         = o.value("openQuantity").toInt();
             t.position_closed       = o.value("closedQuantity").toInt();
-            t.position_value        = o.value("currentMarketValue").toDouble();
-            t.position_price        = o.value("currentPrice").toDouble();
-            t.position_average      = o.value("averageEntryPrice").toDouble();
-            t.position_closed_pnl   = o.value("closedPnl").toDouble();
-            t.position_open_pnl     = o.value("openPnl").toDouble();
-            t.position_total_cost   = o.value("totalCost").toDouble();
+            t.position_value        = o.value("currentMarketValue").toVariant().toFloat();
+            t.position_price        = o.value("currentPrice").toVariant().toFloat();
+            t.position_average      = o.value("averageEntryPrice").toVariant().toFloat();
+            t.position_closed_pnl   = o.value("closedPnl").toVariant().toFloat();
+            t.position_open_pnl     = o.value("openPnl").toVariant().toFloat();
+            t.position_total_cost   = o.value("totalCost").toVariant().toFloat();
             t.position_realtime     = o.value("isRealTime").toBool();
             t.position_reorg        = o.value("isUnderReorg").toBool();
 
@@ -601,11 +606,11 @@ bool QuestradeApi::update_account_orders(Account account) {
             order.open_quantity         = o.value("openQuantity").toInt();
             order.filled_quantity       = o.value("filledQuantity").toInt();
             order.canceled_quantity     = o.value("canceledQuantity").toInt();
-            order.limit_price           = o.value("limitPrice").toDouble();
-            order.stop_price            = o.value("stopPrice").toDouble();
-            order.avg_exec_price        = o.value("avgExecPrice").toDouble();
-            order.last_exec_price       = o.value("lastExecPrice").toDouble();
-            order.commission_charged    = o.value("commissionCharged").toDouble();
+            order.limit_price           = o.value("limitPrice").toVariant().toFloat();
+            order.stop_price            = o.value("stopPrice").toVariant().toFloat();
+            order.avg_exec_price        = o.value("avgExecPrice").toVariant().toFloat();
+            order.last_exec_price       = o.value("lastExecPrice").toVariant().toFloat();
+            order.commission_charged    = o.value("commissionCharged").toVariant().toFloat();
             order.is_allornone          = o.value("isAllOrNone").toBool();
             order.is_anonymous          = o.value("isAnonymous").toBool();
             order.primary_route         = o.value("primaryRoute").toString();
@@ -677,11 +682,11 @@ bool QuestradeApi::history_account_orders(Account account) {
             order.open_quantity         = o.value("openQuantity").toInt();
             order.filled_quantity       = o.value("filledQuantity").toInt();
             order.canceled_quantity     = o.value("canceledQuantity").toInt();
-            order.limit_price           = o.value("limitPrice").toDouble();
-            order.stop_price            = o.value("stopPrice").toDouble();
-            order.avg_exec_price        = o.value("avgExecPrice").toDouble();
-            order.last_exec_price       = o.value("lastExecPrice").toDouble();
-            order.commission_charged    = o.value("commissionCharged").toDouble();
+            order.limit_price           = o.value("limitPrice").toVariant().toFloat();
+            order.stop_price            = o.value("stopPrice").toVariant().toFloat();
+            order.avg_exec_price        = o.value("avgExecPrice").toVariant().toFloat();
+            order.last_exec_price       = o.value("lastExecPrice").toVariant().toFloat();
+            order.commission_charged    = o.value("commissionCharged").toVariant().toFloat();
             order.is_allornone          = o.value("isAllOrNone").toBool();
             order.is_anonymous          = o.value("isAnonymous").toBool();
             order.primary_route         = o.value("primaryRoute").toString();
