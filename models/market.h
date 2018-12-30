@@ -21,7 +21,6 @@ class MarketModel : public Database {
 public:
 
     static Market          select_one(QString name);
-
     static bool            insert(Market data);
     static bool            save(Market data);
 

@@ -11,6 +11,7 @@
 #include "trader.h"
 #include "models/account.h"
 #include "models/candle.h"
+#include "models/chart.h"
 #include "models/stock.h"
 #include "models/strategy.h"
 #include "models/trade.h"

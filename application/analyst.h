@@ -19,8 +19,6 @@ public:
     QString         interval;
 
     Candles         candles;
-    Chart           chart;
-    ChartPoints     chart_points;
 
     bool            clear();
     bool            first();
@@ -31,8 +29,10 @@ public:
     bool            load( int SymbolID, QString Interval );
     bool            loadslice( int SymbolID, QString Interval );
 
-    bool            calculate_all();
+    bool            calculate_all_candles();
     bool            calculate_candle();
+
+    bool            calculate_all_charts();
     bool            calculate_chart();
 
     bool            analyze();

@@ -98,14 +98,12 @@ bool Analyst::last() {
 }
 
 
-bool Analyst::calculate_all() {
+bool Analyst::calculate_all_candles() {
 
     first();
-
     while (next()) {
 
         calculate_candle();
-
         QThread::usleep(1000);
     }
     return true;
@@ -121,7 +119,7 @@ bool Analyst::calculate_candle() {
     Candle c = candles[index];
     Candle p = candles[index-1];
 
-    // chart properties at current index
+    // candle properties at current index
 
     double true_range_1 = c.high - c.low;
     double true_range_2 = qFabs(c.high - p.close);
@@ -213,6 +211,18 @@ bool Analyst::calculate_candle() {
 }
 
 
+bool Analyst::calculate_all_charts() {
+
+    first();
+    while (next()) {
+
+        calculate_chart();
+        QThread::usleep(1000);
+    }
+    return true;
+}
+
+
 bool Analyst::calculate_chart() {
 
     if (index < 50) return false;
@@ -221,39 +231,40 @@ bool Analyst::calculate_chart() {
     Candle p = candles[index-1];
 
     if ( ((c.close > c.ema_10) && (c.ema_10 > c.ema_20) && (c.ema_20 > c.ema_50)) &&
-        !((p.close > p.ema_10) && (p.ema_10 > p.ema_20) && (p.ema_20 > p.ema_50)) ){
+        !((p.close > p.ema_10) && (p.ema_10 > p.ema_20) && (p.ema_20 > p.ema_50)) &&
+        ((c.ema_10 > p.ema_10) && (c.ema_20 > p.ema_20) && (c.ema_50 > p.ema_50)) ){
 
         qDebug() << c.start.toLocalTime() << "  "
                  << c.close << " "
                  << c.ema_10 << " "
                  << c.ema_20 << " "
                  << c.ema_50 << " bull";
+
+        Chart t;
+        t.symbol_id = c.symbol_id;
+        t.symbol_interval = interval;
+        t.candle_id = c.rowid;
+        t.event = QString("cross-bull");
+        ChartModel::insert( t );
+
     }
     else if ( ((c.close < c.ema_10) && (c.ema_10 < c.ema_20) && (c.ema_20 < c.ema_50)) &&
-             !((p.close < p.ema_10) && (p.ema_10 < p.ema_20) && (p.ema_20 < p.ema_50)) ){
+             !((p.close < p.ema_10) && (p.ema_10 < p.ema_20) && (p.ema_20 < p.ema_50)) &&
+              ((c.ema_10 < p.ema_10) && (c.ema_20 < p.ema_20) && (c.ema_50 < p.ema_50)) ){
 
         qDebug() << c.start.toLocalTime() << "  "
                  << c.close << " "
                  << c.ema_10 << " "
                  << c.ema_20 << " "
                  << c.ema_50 << " bear";
+
+        Chart t;
+        t.symbol_id = c.symbol_id;
+        t.symbol_interval = interval;
+        t.candle_id = c.rowid;
+        t.event = QString("cross-bear");
+        ChartModel::insert( t );
     }
 
     return true;
 }
-
-
-bool Analyst::analyze() {
-
-    first();
-
-    while (next()) {
-
-        calculate_chart();
-
-        QThread::usleep(1000);
-    }
-    return true;
-}
-
-

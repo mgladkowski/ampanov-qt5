@@ -71,11 +71,11 @@ void Ampanov::recalc( QString symbol ) {
 
             qInfo() << "Recalculating indicators for " << item.symbol << "OneDay";
             chart.load(item.symbol_id, "OneDay");
-            chart.calculate_all();
+            chart.calculate_all_candles();
 
             qInfo() << "Recalculating indicators for " << item.symbol << "OneHour";
             chart.load(item.symbol_id, "OneHour");
-            chart.calculate_all();
+            chart.calculate_all_candles();
 
             QThread::msleep(3000);
         }
@@ -93,6 +93,8 @@ void Ampanov::replay( QString symbol, int strategy_id ) {
     isReplay        = true;
     replayStrategy  = strategy_id;
 
+    ChartModel::truncate(); // ! clears previous chart points
+
     Stocks stocks = StockModel::select_all_active();
     Stock item;
 
@@ -104,7 +106,7 @@ void Ampanov::replay( QString symbol, int strategy_id ) {
 
             qInfo() << "Charting " << item.symbol << "OneDay";
             chart.load(item.symbol_id, "OneDay");
-            chart.analyze();
+            chart.calculate_all_charts();
 
             QThread::msleep(3000);
         }

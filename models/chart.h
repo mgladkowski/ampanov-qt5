@@ -10,42 +10,24 @@ public:
     int         symbol_id;
     QString     symbol_interval;
     int         candle_id;
-    int         candle_start;
-    QString     trend_major;
-    QString     trend_inter;
-    QString     trend_minor;
-    float       peak_major;
-    float       peak_inter;
-    float       peak_minor;
-    float       support;
-    float       support_strength;
-    float       resistance;
-    float       resistance_strength;
+    QString     event;
 };
 typedef QList<Chart> Charts;
 
-
-class ChartPoint {
-public:
-
-    int         rowid;
-    int         symbol_id;
-    QString     symbol_interval;
-    int         candle_id;
-    QString     point_name;
-    QString     point_direction;
-    QString     point_text;
-};
-typedef QList<ChartPoint> ChartPoints;
-
-
 class ChartModel : public Database {
 
-    static Chart        load( int symbol_id, QString interval );
-    static bool         save( Chart data, QString interval );
+public:
 
-    static ChartPoint   loadpoint( int symbol_id, QString interval );
-    static bool         savepoint( ChartPoint data, QString interval );
+    static Chart        select_one( int symbol_id, QString interval, int candle_id );
+    static bool         insert(Chart data);
+    static bool         save(Chart data);
+    static bool         truncate();
+
+private:
+
+    static Charts       fetchAll(QSqlQuery &query);
+    static Chart        fetch(QSqlQuery &query);
+
 };
 
 #endif // CHART_H
