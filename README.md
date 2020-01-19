@@ -1,4 +1,4 @@
-# ampanov
+# Ampanov
 ## Stock trading robot using C++ QT, REST to Questrade, PHP and websocket front end.
 
 ### Problem : 
